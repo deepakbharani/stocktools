@@ -13,23 +13,28 @@ def get_current_price(tik):
 	return stock_data['Close'][0]
 
 def display_chart(tckr,year):
-	mpf.plot(df, type="candle", volume=True, mav=(20), tight_layout=True,
+	figg = Figure(figsize=(6, 6))
+	a = fig.add_subplot(111)
+	a.plot(df, type="candle", volume=True, mav=(20), tight_layout=True,
 			 title=tckr, style="yahoo")
 
+def show_chart(tik):
+
+	df = tik.history(period="max")
+	mpf.plot(df.loc[year], type="candle", volume=True, tight_layout=True)
 
 def myClick(tckr,year):
-
+	tik = yf.Ticker(tckr)
+	cmp = get_current_price(tik)
+	Label(root, text="You just entered a ticker " + tckr).grid(row=2, column=1)
+	Label(root, text="Stock is currently trading at: " + str(cmp)).grid(row=3, column=1)
+	Label(root, text="Stock is currently trading at: " + str(tik.info['trailingPE'])).grid(row=4, column=1)
+	#mpf.plot(df.loc[year], type="candle", volume=True, tight_layout=True)
+	chartbutton = Button(root, text="Show Chart", command=lambda: show_chart(str(tik)), height=1, width=5).grid(row=4, column=0)
 	try:
-		tik = yf.Ticker(tckr)
-		cmp = get_current_price(tik)
-		Label(root, text="You just entered a ticker " + tckr).grid(row=2, column=1)
-		Label(root, text="Stock is currently trading at: " + str(cmp)).grid(row=3, column=1)
-		df = tik.history(period = "max")
-		mpf.plot(df.loc[year], type = "candle", volume = True, tight_layout = True)
-
+		pass
 	except:
 		Label(root, text="This Stock doesn't exist").grid(row=4, column=1)
-
 
 # Add Label
 mylabel = Label(root, text = "Enter the ticker:").grid(row = 0, column = 0)
@@ -50,7 +55,6 @@ yr.grid(row = 1, column  = 1)
 mybutton = Button(root, text = "Go!", command=lambda: myClick(str(entry.get()), str(year.get())),
 				  height = 1, width = 5).grid(row = 2, column  = 0)
 quitbutton = Button(root, text = "Quit", command = root.quit, height = 1, width = 5).grid(row = 3, column  = 0)
-
 
 
 root.mainloop()
